@@ -50,7 +50,15 @@ namespace WSOrderCreator.Generators
     }
 
     public WSShopper GetGuestShopper()
-      =>
-      this.generatedGuestShopper;
+    {
+      bool isShopperInitialized = this.generatedGuestShopper != null;
+
+      if (!isShopperInitialized)
+      {
+        throw new Exception("Guest shopper must be initialized");
+      }
+
+      return this.generatedGuestShopper;
+    }
   }
 }
