@@ -51,14 +51,14 @@ namespace WSOrderCreator.Generators
     }
 
     public WSOrder GetOrder()
-    {
-      return this.generatedOrder;
-    }
+      =>
+      this.generatedOrder;
 
     private void setUpOrderItem(OrderItem orderItem, string shopperId)
     {
       int auctionItemId = addAuctionItem(orderItem);
       handleCouponItem(orderItem, shopperId);
+      //handleDiscount(orderItem, auctionItemId);
     }
 
     private void handleCouponItem(OrderItem orderItem, string shopperId)
@@ -68,20 +68,7 @@ namespace WSOrderCreator.Generators
       if (isProductWithCoupon)
       {
         addCouponItem(orderItem.FinalPrice, shopperId);
-      }      
-    }
-
-    private WSOrder getInitializedOrder(WSShopper shopper, int shopID, int externalOrderID)
-    {
-      return new WSOrder(
-        userIp: WSGeneralUtils.GetAppSettings("DefaultIpAddress"),
-        createdByProcess: WSOrderProcess.OrderGenCC,        
-        shopper: shopper,
-        shopId: shopID)
-      {
-        SalesForceOrderNo = externalOrderID.ToString(),
-        RequestedPickingDate = DateTime.Now
-      };
+      }
     }
 
     private int addAuctionItem(OrderItem item)
@@ -111,22 +98,6 @@ namespace WSOrderCreator.Generators
         WSOrderDiscountItem discountItem = getDiscountItem(item, auctionItemId);
         this.generatedOrder.AddItem(discountItem);
       }
-    }
-
-    private WSOrderDiscountItem getDiscountItem(OrderItem item, int auctionItemId)
-    {
-      return new WSOrderDiscountItem(
-        itemPrice: (item.PriceBeforeDiscount - item.FinalPrice) * 100,
-        itemDesc: WSGeneralUtils.GetAppSettings("DefaultItemDesc"),
-        notes: WSGeneralUtils.GetAppSettings("DefaultItemNote"),
-        discountType: WSOrderDiscountItemType.Walla,
-        reason: WSDiscountReasonType.General,        
-        relatedItems: new List<WSOrderRelatedItem>()
-        {
-          new WSOrderRelatedItem(
-            relationType: WSOrderItemRelationType.Parent,
-            itemId: auctionItemId)
-        });
     }
 
     private void addCouponItem(int couponAmount, string shopperId)
@@ -165,6 +136,37 @@ namespace WSOrderCreator.Generators
       this.generatedOrder.IsSalesForce = false;
       this.generatedOrder.ShopId = shopId;
     }
+
+    private WSOrderDiscountItem getDiscountItem(OrderItem item, int auctionItemId)
+      =>
+      new WSOrderDiscountItem(
+        itemPrice: (item.PriceBeforeDiscount - item.FinalPrice) * 100,
+        relatedItems: getRelatedItems(auctionItemId),
+        discountType: WSOrderDiscountItemType.Walla,
+        reason: WSDiscountReasonType.General,
+        itemDesc: "הנחת קופה",
+        notes: "פריט הנחה");
+
+    private List<WSOrderRelatedItem> getRelatedItems(int auctionItemId)
+      =>
+      new List<WSOrderRelatedItem>()
+      {
+        new WSOrderRelatedItem(
+          relationType: WSOrderItemRelationType.Parent,
+          itemId: auctionItemId)
+      };
+
+    private WSOrder getInitializedOrder(WSShopper shopper, int shopID, int externalOrderID)
+      =>
+      new WSOrder(
+        createdByProcess: WSOrderProcess.MatanotCC,
+        userIp: "0.0.0.0",
+        shopper: shopper,
+        shopId: shopID)
+      {
+        SalesForceOrderNo = externalOrderID.ToString(),
+        RequestedPickingDate = DateTime.Now,
+      };
 
     private WSBaseAuction getAuctionDetails(string auctionID)
       =>
