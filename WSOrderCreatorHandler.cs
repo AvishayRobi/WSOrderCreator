@@ -18,10 +18,9 @@ namespace WSOrderCreator
     }
 
     private WSOrder getWsOrder(CasualOrder casualOrder)
-    {
-      string shopperID = getShopperID();
-      WSShopper guestShopper = generateShopper(shopperID);
-      WSOrder generatedOrder = generateOrder(guestShopper, casualOrder);
+    {      
+      WSShopper wsShopper = getWsShopper(casualOrder.ShopperID);
+      WSOrder generatedOrder = generateOrder(wsShopper, casualOrder);
 
       return generatedOrder;
     }
@@ -31,7 +30,7 @@ namespace WSOrderCreator
       new WSPaymentGenerator()
       .GetPayment();
 
-    private WSShopper generateShopper(string shopperID)
+    private WSShopper getWsShopper(string shopperID)
       =>
       new WSShopperGenerator()
       .SetShopperID(shopperID)
