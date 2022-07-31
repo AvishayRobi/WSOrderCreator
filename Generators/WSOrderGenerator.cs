@@ -58,7 +58,6 @@ namespace WSOrderCreator.Generators
     {
       int auctionItemId = addAuctionItem(orderItem);
       handleCouponItem(orderItem, shopperId);
-      //handleDiscount(orderItem, auctionItemId);
     }
 
     private void handleCouponItem(OrderItem orderItem, string shopperId)
@@ -159,8 +158,8 @@ namespace WSOrderCreator.Generators
     private WSOrder getInitializedOrder(WSShopper shopper, int shopID, int externalOrderID)
       =>
       new WSOrder(
+        userIp: WSGeneralUtils.GetAppSettings("defaultIp"),
         createdByProcess: WSOrderProcess.MatanotCC,
-        userIp: "0.0.0.0",
         shopper: shopper,
         shopId: shopID)
       {
