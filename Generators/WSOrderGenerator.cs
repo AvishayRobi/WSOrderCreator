@@ -31,9 +31,9 @@ namespace WSOrderCreator.Generators
       return this;
     }
 
-    public WSOrderGenerator SetOrderItems(List<OrderItem> eilatOrderItems, string shopperId)
+    public WSOrderGenerator SetOrderItems(List<OrderItem> orderItems, string shopperId)
     {
-      eilatOrderItems.ForEach(i =>
+      orderItems.ForEach(i =>
       {
         i.Quantity.Times(() =>
           setUpOrderItem(i, shopperId));
