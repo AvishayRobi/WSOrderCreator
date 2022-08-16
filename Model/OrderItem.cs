@@ -18,7 +18,7 @@ namespace WSOrderCreator.Model
 
     public IWSAuction AuctionDetails { get; set; }
 
-    public int ShopID { get; set; }
+    public string PfId { get; set; }
 
     public OrderItem ValidatePrices()
     {
