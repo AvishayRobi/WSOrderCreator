@@ -77,6 +77,7 @@ namespace WSOrderCreator.Generators
 
       WSOrderProductAuctionItem orderAuctionItem = new WSOrderProductAuctionItem(
         itemBeforeDiscountPrice: item.PriceBeforeDiscount * 100,
+        stockPfId: getAttributeStockPfIdIfExist(item.PfId),
         price: item.PriceBeforeDiscount * 100,
         itemType: WSOrderItemType.Product,
         itemDesc: item.Description,
@@ -171,5 +172,10 @@ namespace WSOrderCreator.Generators
       =>
       this.auctionItemFactory
       .GetAuctionByAuctionID(auctionID);
+    
+    private string getAttributeStockPfIdIfExist(string sfProductId)
+      =>
+      this.auctionItemFactory
+      .GetWallaShopsAttributeStockPfid(sfProductId);
   }
 }
