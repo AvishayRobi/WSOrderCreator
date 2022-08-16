@@ -10,6 +10,7 @@ namespace WSOrderCreator.Generators
   public class WSGuestShopperGenerator
   {
     #region Data Members
+    private static WSCryptor cryptor { get; } = new WSCryptor();
     private WSShopper generatedGuestShopper { get; set; }
     #endregion
 
@@ -22,8 +23,6 @@ namespace WSOrderCreator.Generators
 
     public WSGuestShopperGenerator InitializeGuestShopper(ShopperDetails shopperDetails)
     {
-      WSCryptor cryptor = new WSCryptor();
-
       this.generatedGuestShopper = new WSShopper()
       {
         EncrytedIDNumber = cryptor.EncryptData(shopperDetails.Idz),
