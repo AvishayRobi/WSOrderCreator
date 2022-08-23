@@ -1,5 +1,3 @@
-using WallaShops.Objects;
-
 namespace WSOrderCreator.Model
 {
   public class OrderItem
@@ -15,8 +13,6 @@ namespace WSOrderCreator.Model
     public string Description { get; set; }
 
     public int AuctionID { get; set; }
-
-    public IWSAuction AuctionDetails { get; set; }
 
     public string PfId { get; set; }
 
