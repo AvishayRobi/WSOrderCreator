@@ -46,7 +46,10 @@ namespace WSOrderCreator.Generators
 
     public void HandleShipmentItems()
     {
-      bool isOrderContainsShipments = this.wsOrder.OrderShipments.Any();
+      bool isOrderContainsShipments = 
+        this.wsOrder
+        .OrderShipments
+        .Any();
 
       if (isOrderContainsShipments)
       {
@@ -55,17 +58,23 @@ namespace WSOrderCreator.Generators
     }
 
     private void addItemsToShipment()
-    {
-      foreach (WSOrderItem item in this.wsOrder.Items.Values)
+      =>
+      this.wsOrder
+      .Items
+      .Values
+      .ApplyEach(i =>
       {
-        this.wsOrder.OrderShipments.Values.ElementAt(0).tryToAddItemToShipment(this.wsOrder, item);
-      }
-    }
+        this.wsOrder
+        .OrderShipments
+        .Values
+        .ElementAt(0)
+        .TryToAddItemToShipment(this.wsOrder, i);
+      });
 
     private WSShipment getInitializedShipment(CasualOrder casualOrder)
       =>
       new WSShipment(
-        shippingMethod: getShipmentMethod(casualOrder.Items.First().AuctionDetails),
+        shippingMethod: WSShipmentMethodWizard.GetShipmentMethod(casualOrder),
         recipientContact: getContactDetails(casualOrder.ShopperDetails),
         recipientAddress: getAddress(casualOrder.ShippingDetails),
         createdByProcess: WSOrderProcess.MatanotCC,
@@ -101,13 +110,6 @@ namespace WSOrderCreator.Generators
         zipCode: shippingDetails.ZipCode,
         cityName: shippingDetails.City,
         isPoConfirmed: false,
-        poBox: string.Empty);
-
-    private WSShipmentMethodsType getShipmentMethod(IWSAuction auction)
-      =>
-      WSShipmentMethod
-      .GetAvailableShipmentMethods(new[] { auction })
-      .First()
-      .MethodType;
+        poBox: string.Empty);    
   }
 }
