@@ -1,5 +1,4 @@
 using WallaShops.Objects;
-using WallaShops.Utils;
 using WSOrderCreator.Generators;
 using WSOrderCreator.Model;
 
@@ -18,7 +17,7 @@ namespace WSOrderCreator
     }
 
     private WSOrder getWsOrder(CasualOrder casualOrder)
-    {      
+    {
       WSShopper wsShopper = getWsShopper(casualOrder.ShopperID);
       WSOrder generatedOrder = generateOrder(wsShopper, casualOrder);
 
@@ -45,9 +44,8 @@ namespace WSOrderCreator
 
     private WSOrder generateOrder(WSShopper shopper, CasualOrder casualOrder)
       =>
-      new WSOrderGenerator(shopper, casualOrder.ShopID, casualOrder.EntryID)
-      .SetOrderItems(casualOrder.Items, shopper.ShopperID)
-      .SetAffiliate(casualOrder.AffiliateName)
+      new WSOrderGenerator(shopper)
+      .ConvertFromCasualOrder(casualOrder)
       .SaveOrder()
       .GetOrder();
 
@@ -58,10 +56,5 @@ namespace WSOrderCreator
       .InitializeShipment(casualOrder)
       .AddShippingItem()
       .HandleShipmentItems();
-
-    private string getShopperID()
-      =>
-      WSGeneralUtils
-      .GetAppSettings("CasualShopperID");
   }
 }
