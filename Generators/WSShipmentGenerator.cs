@@ -67,7 +67,7 @@ namespace WSOrderCreator.Generators
         .OrderShipments
         .Values
         .ElementAt(0)
-        .tryToAddItemToShipment(this.wsOrder, i);
+        .TryToAddItemToShipment(this.wsOrder, i);
       });
 
     private WSShipment getInitializedShipment(CasualOrder casualOrder, WSOrderProcess orderProcess)
