@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using WallaShops.Objects;
+using WallaShops.Utils;
 using WSOrderCreator.Model;
 
 namespace WSOrderCreator.Generators
@@ -19,9 +20,9 @@ namespace WSOrderCreator.Generators
     }
     #endregion
 
-    public WSOrderGenerator ConvertFromCasualOrder(CasualOrder casualOrder)
+    public WSOrderGenerator ConvertFromCasualOrder(CasualOrder casualOrder, WSOrderProcess orderProcess)
     {
-      initializeOrder(casualOrder.ShopID, casualOrder.EntryID);
+      initializeOrder(casualOrder.ShopID, casualOrder.EntryID, orderProcess);
       setAffiliate(casualOrder.AffiliateName);
       setUpOrderItems(casualOrder.Items);
 
@@ -39,11 +40,11 @@ namespace WSOrderCreator.Generators
       =>
       this.generatedOrder;
 
-    private WSOrder getInitializedOrder(int externalOrderID, int shopID)
+    private WSOrder getInitializedOrder(int externalOrderID, int shopID, WSOrderProcess orderProcess)
       =>
       new WSOrder(
-        createdByProcess: WSOrderProcess.MatanotCC,
-        userIp: "0.0.0.0",
+        userIp: WSGeneralUtils.GetAppSettings("defaultShopperIpAddress"),
+        createdByProcess: orderProcess,
         shopper: this.wsShopper,
         shopId: shopID)
       {
@@ -58,10 +59,10 @@ namespace WSOrderCreator.Generators
       .SetShopperId(this.wsShopper.ShopperID)
       .GenerateOrderItems(orderItems);
 
-    private void initializeOrder(int shopID, int externalOrderID)
+    private void initializeOrder(int shopID, int externalOrderID, WSOrderProcess orderProcess)
     {
+      this.generatedOrder = getInitializedOrder(externalOrderID, shopID, orderProcess);
       setProperties(shopID);
-      this.generatedOrder = getInitializedOrder(externalOrderID, shopID);
     }
 
     private void setProperties(int shopID)
