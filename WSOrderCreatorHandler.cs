@@ -6,6 +6,24 @@ namespace WSOrderCreator
 {
   public class WSOrderCreatorHandler
   {
+    #region Data Members
+    private WSOrderProcess orderProcess { get; set; }
+    #endregion
+
+    #region Ctor
+    public WSOrderCreatorHandler()
+    {
+      this.orderProcess = WSOrderProcess.GenericOrderCC;
+    }
+    #endregion
+
+    public WSOrderCreatorHandler SetOrderProcess(WSOrderProcess orderProcess)
+    {
+      this.orderProcess = orderProcess;
+
+      return this;
+    }
+
     public void CreateWsAuction(ICasualOrderConvertible convertibleOrder)
     {
       CasualOrder casualOrder = convertibleOrder.ConvertToCasualOrder();
@@ -45,7 +63,7 @@ namespace WSOrderCreator
     private WSOrder generateOrder(WSShopper shopper, CasualOrder casualOrder)
       =>
       new WSOrderGenerator(shopper)
-      .ConvertFromCasualOrder(casualOrder)
+      .ConvertFromCasualOrder(casualOrder, this.orderProcess)
       .SaveOrder()
       .GetOrder();
 
@@ -53,7 +71,7 @@ namespace WSOrderCreator
       =>
       new WSShipmentGenerator()
       .SetWsOrder(wsOrder)
-      .InitializeShipment(casualOrder)
+      .GenerateFromCasualOrder(casualOrder, this.orderProcess)
       .AddShippingItem()
       .HandleShipmentItems();
   }
