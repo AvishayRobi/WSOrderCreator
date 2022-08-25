@@ -18,7 +18,7 @@ namespace WSOrderCreator.Generators
       this.generatedShipment = null;
       this.wsOrder = null;
     }
-    #endregion    
+    #endregion
 
     public WSShipmentGenerator SetWsOrder(WSOrder order)
     {
@@ -27,9 +27,9 @@ namespace WSOrderCreator.Generators
       return this;
     }
 
-    public WSShipmentGenerator InitializeShipment(CasualOrder casualOrder)
+    public WSShipmentGenerator GenerateFromCasualOrder(CasualOrder casualOrder, WSOrderProcess orderProcess)
     {
-      this.generatedShipment = getInitializedShipment(casualOrder);
+      this.generatedShipment = getInitializedShipment(casualOrder, orderProcess);
       this.wsOrder.AddShipment(this.generatedShipment);
 
       return this;
@@ -46,8 +46,7 @@ namespace WSOrderCreator.Generators
 
     public void HandleShipmentItems()
     {
-      bool isOrderContainsShipments = 
-        this.wsOrder
+      bool isOrderContainsShipments = this.wsOrder
         .OrderShipments
         .Any();
 
@@ -68,16 +67,16 @@ namespace WSOrderCreator.Generators
         .OrderShipments
         .Values
         .ElementAt(0)
-        .TryToAddItemToShipment(this.wsOrder, i);
+        .tryToAddItemToShipment(this.wsOrder, i);
       });
 
-    private WSShipment getInitializedShipment(CasualOrder casualOrder)
+    private WSShipment getInitializedShipment(CasualOrder casualOrder, WSOrderProcess orderProcess)
       =>
       new WSShipment(
         shippingMethod: WSShipmentMethodWizard.GetShipmentMethod(casualOrder),
         recipientContact: getContactDetails(casualOrder.ShopperDetails),
         recipientAddress: getAddress(casualOrder.ShippingDetails),
-        createdByProcess: WSOrderProcess.MatanotCC,
+        createdByProcess: orderProcess,
         orderId: this.wsOrder.OrderId,
         shippingDays: 1)
       {
@@ -110,6 +109,6 @@ namespace WSOrderCreator.Generators
         zipCode: shippingDetails.ZipCode,
         cityName: shippingDetails.City,
         isPoConfirmed: false,
-        poBox: string.Empty);    
+        poBox: string.Empty);
   }
 }
