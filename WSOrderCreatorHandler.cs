@@ -27,11 +27,23 @@ namespace WSOrderCreator
     public void CreateWsAuction(ICasualOrderConvertible convertibleOrder)
     {
       CasualOrder casualOrder = convertibleOrder.ConvertToCasualOrder();
-      WSOrder wsOrder = getWsOrder(casualOrder);
-      WSPayment payment = getPayment();
+      PurpleOrder purpleOrder = CreatePurpleOrder(casualOrder);
 
+      purpleOrder.MakeOrderGreen();
+    }
+
+    private PurpleOrder CreatePurpleOrder(CasualOrder casualOrder)
+    {
+      WSOrder wsOrder = getWsOrder(casualOrder);
+      WSSalesForcePayment payment = getPayment();
       createShipment(wsOrder, casualOrder);
-      wsOrder.AddOrderDebit(payment, wsOrder.TotalBalance, casualOrder.ShopperDetails.Idz);
+
+      return new PurpleOrder()
+      {
+        ShopperIdz = casualOrder.ShopperDetails.Idz,
+        WsOrder = wsOrder,
+        Payment = payment
+      };
     }
 
     private WSOrder getWsOrder(CasualOrder casualOrder)
